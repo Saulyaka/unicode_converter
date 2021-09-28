@@ -2,9 +2,9 @@
 # unicode_converter/converter.py
 
 
-from parser_ import ParseMode, UTF16LEParser, UTF8Parser
+from parser_ import ParseMode, UTF16LEParser, UTF8Parser, UTF16BEParser, UTF32BEParser, UTF32LEParser
 from io_buffer import Reader, Writer, BufferEmpty 
-from  serialazer_ import UTF16LESerializer, UTF8Serializer
+from  serialazer_ import UTF16LESerializer, UTF8Serializer, UTF16BESerializer, UTF32LESerializer, UTF32BESerializer
 
 
 def converter(infile, outfile, parser_class, serializer_class, mode):
@@ -24,10 +24,11 @@ def converter(infile, outfile, parser_class, serializer_class, mode):
                 writer.flush()
                 break
 
+
 if __name__ == "__main__":
-    filename_in = "output16LE.txt"
-    filename_out = "test16LE_Parser.txt"
-    parser_class = UTF16LEParser
+    filename_in = "testUTF32BE.txt"
+    filename_out =  "test-test.txt"
+    parser_class = UTF32BEParser
     serializer_class = UTF8Serializer
     mode = ParseMode.LATIN1
 

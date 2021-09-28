@@ -112,8 +112,60 @@ class UTF16LEParser(Parser):
                 return self.on_error()
             self.reader.advance_words(2)
             return (pair2 & 0x3FF) | ((pair1 & 0x3FF) << 10) + 0x10000
+        # usual pair of two bytes
+        else:
+            self.reader.advance_words(1)
+            return pair1
+
+
+class UTF16BEParser(Parser):
+    def __init__(self, reader, mode):
+        self.reader = reader
+        self.mode = mode
+
+
+    def try_parse_char(self):
+        pair1 = self.reader.peek_word_BE(0)
+        # surrogates
+        if pair1 >> 10 == 0x36:
+            pair2 = self.reader.peek_word_BE(1)
+            if pair2 >> 10 != 0x37:
+                return self.on_error()
+            self.reader.advance_words(2)
+            return (pair2 & 0x3FF) | ((pair1 & 0x3FF) << 10) + 0x10000
         # usual pair of bytes
         else:
             self.reader.advance_words(1)
             return pair1
+
+
+class UTF32BEParser(Parser):
+    def __init__(self, reader, mode):
+        self.reader = reader
+        self.mode = mode
+
+
+    def try_parse_char(self):
+        pair1 = self.reader.peek_word_BE(0)
+        pair2 = self.reader.peek_word_BE(1)
+        self.reader.advance_words(2)
+        return pair1 << 16 | pair2
+
+
+class UTF32LEParser(Parser):
+    def __init__(self, reader, mode):
+        self.reader = reader
+        self.mode = mode
+
+
+    def try_parse_char(self):
+        pair1 = self.reader.peek_word_LE(0)
+        pair2 = self.reader.peek_word_LE(1)
+        self.reader.advance_words(2)
+        return pair1 | pair2 << 16
+
+
+
+
+
         

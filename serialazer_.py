@@ -29,6 +29,38 @@ class UTF16LESerializer(Serializer):
             self.writer.write_word_LE((char - 0x10000) & 0x3FF | 0xDC00)
 
 
+class UTF16BESerializer(Serializer):
+    def __init__(self, writer):
+        self.writer = writer
+
+
+    def serialize_char(self, char):
+        if char <= 0xFFFF:
+            self.writer.write_word_BE(char)
+        else:
+            self.writer.write_word_BE((char - 0x10000) >> 10 | 0xD800)
+            self.writer.write_word_BE((char - 0x10000) & 0x3FF | 0xDC00)
+
+
+class UTF32BESerializer(Serializer):
+    def __init__(self, writer):
+        self.writer = writer
+
+
+    def serialize_char(self, char):
+        self.writer.write_word_BE(char >> 16)
+        self.writer.write_word_BE(char & 0xFFFF)
+
+
+class UTF32LESerializer(Serializer):
+    def __init__(self, writer):
+        self.writer = writer
+
+
+    def serialize_char(self, char):
+        self.writer.write_word_LE(char & 0xFFFF)
+        self.writer.write_word_LE(char >> 16)
+            
 
 class UTF8Serializer(Serializer):
     def __init__(self, writer):
